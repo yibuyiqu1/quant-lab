@@ -32,17 +32,23 @@ GIT_CANDIDATES = [
 ]
 
 # 不应该进仓库的规则：(匹配前缀/片段, 说明)
+# 注意：.vscode/ 是故意保留的——它把解释器钉在 .venv，属于"让别人能复现"的配置
 SHOULD_NOT_TRACK = [
     ("资料库/", "教材与讲义 PDF（体积大 + 版权上不适合公开转存）"),
     ("归档/", "归档的一次性脚本与过期文件"),
     (".workbuddy/", "别的工具的元数据，与本项目无关"),
-    (".vscode/", "编辑器个人配置（可选保留）"),
     (".venv/", "虚拟环境（几千个文件）"),
     ("__pycache__/", "Python 字节码缓存"),
     (".pytest_cache/", "测试缓存"),
     ("data/raw/", "原始数据（可由脚本重新下载）"),
     ("data/clean/", "清洗后数据（可由脚本重新生成）"),
 ]
+
+# 报告类里的中间产物：建议不进仓库（规则写在 .gitignore 里，但已跟踪的需手动 git rm --cached）
+INTERMEDIATE_PATTERNS = (
+    "reports/*.json",
+    "reports/figs/_*.png",
+)
 
 # 报告类：可以留一部分，但通常不必全留
 REPORT_LIKE = ("reports/",)
@@ -133,13 +139,21 @@ def main() -> int:
     else:
         print("  [干净] 没有发现不该上传的内容")
 
-    # 报告类
-    rep = [r for r in tracked if r.startswith(REPORT_LIKE)]
-    if rep:
-        print(f"\n  提示：{REPORT_LIKE[0]} 下有 {len(rep)} 个文件（多次运行的中间产物）。")
-        print("        建议只保留代表性的图与最终报告，其余加入 .gitignore：")
-        print("        reports/**/*.json")
-        print("        reports/figs/_*.png")
+    # 报告类里的中间产物
+    import fnmatch
+    inter = [r for r in tracked if any(fnmatch.fnmatch(r, p) for p in INTERMEDIATE_PATTERNS)]
+    if inter:
+        print(f"\n  提示：{len(inter)} 个报告中间产物还在仓库里（多次运行的 JSON 等）。")
+        print("        建议只保留代表性的图与最终报告：")
+        for r in inter:
+            print(f"          {r}")
+        print("        处理：")
+        for p in INTERMEDIATE_PATTERNS:
+            folder = os.path.dirname(p)
+            print(f"          git rm --cached \"{folder}\"/*.json   # 按需调整")
+        print("        （.gitignore 里已经写了规则，但已跟踪的文件必须显式移除）")
+    else:
+        print("\n  [干净] reports/ 下没有多余的中间产物")
 
     if args.files:
         print(f"\n{'=' * 66}")
