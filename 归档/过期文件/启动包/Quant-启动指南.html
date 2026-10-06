@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quant Researcher · 启动包</title>
+<style>
+  :root{
+    --bg:#0A0A0B; --card:#141417; --line:#27272A; --accent:#22D3EE;
+    --tx:#FAFAFA; --tx2:#A1A1AA; --tx3:#71717A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--tx);
+    font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    line-height:1.7; font-size:15px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:56px 28px 80px}
+  code,.mono{font-family:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+  /* header */
+  .eyebrow{color:var(--accent);font-size:12px;letter-spacing:.18em;font-family:"Roboto Mono",monospace;margin-bottom:14px}
+  h1{font-size:40px;line-height:1.25;font-weight:700;letter-spacing:-.5px}
+  h1 em{font-style:normal;color:var(--accent)}
+  .lede{color:var(--tx2);margin-top:14px;max-width:760px;font-size:16px}
+
+  /* sections */
+  section{margin-top:52px}
+  h2{font-size:22px;font-weight:600;display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  h2 .num{font-family:"Roboto Mono",monospace;font-size:13px;color:var(--accent);
+    border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--card)}
+  .sub{color:var(--tx3);font-size:14px;margin-bottom:22px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:880px){.g3,.g2{grid-template-columns:1fr}}
+
+  /* step cards */
+  .step{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:20px 22px}
+  .step h3{font-size:16px;font-weight:600;margin-bottom:8px}
+  .step p{color:var(--tx2);font-size:14px}
+  .step .tag{display:inline-block;font-family:"Roboto Mono",monospace;font-size:11px;
+    color:var(--accent);border:1px solid rgba(34,211,238,.35);border-radius:4px;padding:1px 7px;margin-bottom:10px}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;color:var(--tx3);font-weight:500;font-size:12.5px;letter-spacing:.05em;
+     padding:10px 12px;border-bottom:1px solid var(--line)}
+  td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--tx2)}
+  td:first-child{color:var(--tx);font-weight:500;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  .pri{color:var(--accent);font-family:"Roboto Mono",monospace;font-size:12px;white-space:nowrap}
+
+  /* resource list */
+  .res{display:grid;grid-template-columns:1fr;gap:10px}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 20px;
+        display:flex;gap:16px;align-items:flex-start}
+  .item .n{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--tx3);min-width:26px;padding-top:3px}
+  .item .body{flex:1}
+  .item .t{font-size:15px;font-weight:600;margin-bottom:4px}
+  .item .d{color:var(--tx2);font-size:13.5px}
+  .item .l{display:inline-block;margin-top:8px;font-family:"Roboto Mono",monospace;font-size:12px;
+           color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(34,211,238,.3)}
+  .item .l:hover{border-bottom-color:var(--accent)}
+  .badge{display:inline-block;font-size:11.5px;border-radius:4px;padding:2px 8px;margin-left:8px;
+         border:1px solid var(--line);color:var(--tx3);font-weight:400}
+  .b-must{color:var(--accent);border-color:rgba(34,211,238,.35)}
+  .b-adv{color:#F59E0B;border-color:rgba(245,158,11,.3)}
+  .b-free{color:#10B981;border-color:rgba(16,185,129,.3)}
+
+  /* code block */
+  pre{background:#0E0E11;border:1px solid var(--line);border-radius:10px;padding:18px 20px;
+      overflow-x:auto;font-family:"Roboto Mono",monospace;font-size:13px;line-height:1.75;color:#D4D4D8}
+  pre .c{color:#52525B}
+  pre .k{color:var(--accent)}
+
+  /* callout */
+  .note{border:1px solid var(--line);border-left:3px solid #F59E0B;border-radius:10px;
+        padding:16px 20px;background:rgba(245,158,11,.05);font-size:14px;color:var(--tx2)}
+  .note b{color:#F59E0B;font-weight:600}
+  ul{margin:8px 0 0 20px;color:var(--tx2);font-size:14px}
+  li{margin-bottom:6px}
+  .foot{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--tx3);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">QUANT RESEARCHER · KICKOFF PACK</div>
+  <h1>资料清单 + <em>30 天启动方案</em></h1>
+  <p class="lede">面向北大金数背景、主攻因子 / Alpha 研究。所有资源分为「必做 / 进阶 / 参考」三档，
+     启动方案以「能跑通一个因子」为第一目标，而不是以「读完一本书」为目标。</p>
+
+  <!-- 0 -->
+  <section>
+    <h2><span class="num">00</span>今天就能做完的三件事</h2>
+    <p class="sub">目标：30 分钟内让环境转起来，心理上先跨过门槛。</p>
+    <div class="grid g3">
+      <div class="step">
+        <span class="tag">30 min</span>
+        <h3>装好环境</h3>
+        <p>Python 3.11 + uv/conda 建独立环境，装 <code class="mono">pandas numpy akshare matplotlib jupyter</code>。
+           跑通 <code class="mono">import akshare</code> 即算完成。</p>
+      </div>
+      <div class="step">
+        <span class="tag">10 min</span>
+        <h3>注册 BRAIN</h3>
+        <p>WorldQuant BRAIN 平台免费注册，进入 Learn 板块看第一个 Tutorial。
+           它提供 12 万+ 数据字段和工业级因子评估框架，是零成本接触真实因子研究的最短路径。</p>
+      </div>
+      <div class="step">
+        <span class="tag">20 min</span>
+        <h3>拉通第一次数据</h3>
+        <p>用 akshare 拉 30 只股票近 3 年前复权日线，落盘为 parquet/csv。
+           <b style="color:var(--tx)">数据到手的那一刻，学习才真正开始。</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1 -->
+  <section>
+    <h2><span class="num">01</span>环境搭建</h2>
+    <p class="sub">一次性做完，之后两个月不再为环境问题分心。</p>
+    <div class="card">
+<pre><span class="c"># 1) 建独立环境（推荐 uv，比 conda 快很多）</span>
+<span class="k">pip</span> install uv
+uv venv ~/.venvs/quant --python 3.11
+source ~/.venvs/quant/bin/activate      <span class="c"># Windows: .venvs\quant\Scripts\activate</span>
+
+<span class="c"># 2) 核心依赖（第一周只装这些，别一次装全）</span>
+<span class="k">uv</span> pip install pandas numpy scipy statsmodels scikit-learn
+<span class="k">uv</span> pip install akshare baostock matplotlib plotly jupyterlab
+
+<span class="c"># 3) 后续再装（第二周起）</span>
+<span class="k">uv</span> pip install alphalens-reloaded empyrical quantstats pyportfolioopt</pre>
+      <p style="margin-top:16px;color:var(--tx2);font-size:14px">
+        ⚠ 注意：<code class="mono">alphalens</code> 原版（Quantopian）已基本停止维护，在 Python 3.11 上易报依赖错误；
+        建议直接用社区维护的 <code class="mono">alphalens-reloaded</code>。若装不上，不要卡住——
+        第一周的因子分析完全可以自己写 20 行 IC / 分组收益代码，反而理解更深。</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <h2><span class="num">02</span>四周启动计划</h2>
+    <p class="sub">每周一个明确交付物。没有交付物的一周 = 白过的一周。</p>
+    <div class="card" style="padding:8px 4px">
+      <table>
+        <thead><tr><th style="width:110px">阶段</th><th>做什么</th><th style="width:200px">交付物（验收标准）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>第 1 周<br><span style="color:var(--tx3);font-weight:400;font-size:12.5px">工具链</span></td>
+            <td>环境搭建；用 <code class="mono">pandas</code> 重写一遍「收益率 / 波动率 / 夏普 / 最大回撤」的计算；
+                手写一个 50 行内的向量化回测循环（不借助框架）。</td>
+            <td>一个 <code class="mono">metrics.py</code>，能用随机数据算出正确的夏普与最大回撤。</td>
+          </tr>
+          <tr>
+            <td>第 2 周<br><span style="color:var(--tx3);font-weight:400;font-size:12.5px">因子入门</span></td>
+            <td>精读《因子投资：方法与实践》第 1–3 章；下载并清洗 A 股日线；计算 20 日动量与市值因子；
+                算 IC（Spearman）、画分组净值曲线。</td>
+            <td>一张 5 分组累计净值图 + 一张 IC 时间序列图。能说清 IC 为什么这么低。</td>
+          </tr>
+          <tr>
+            <td>第 3 周<br><span style="color:var(--tx3);font-weight:400;font-size:12.5px">体系化</span></td>
+            <td>补齐价值（BP/EP）、波动率、换手率因子；做因子正交化与共线性检查；
+                读 López de Prado 第 7 章（交叉验证陷阱）。</td>
+            <td>4 个因子的 IC 汇总表 + 相关系数矩阵。能指出哪两个因子高度冗余。</td>
+          </tr>
+          <tr>
+            <td>第 4 周<br><span style="color:var(--tx3);font-weight:400;font-size:12.5px">第一个完整项目</span></td>
+            <td>把 4 个因子合成复合打分，做行业市值中性化，加入双边千三的交易成本，
+                跑样本内 / 样本外（按时间切分）对比。注册 BRAIN 并提交第一个 Alpha。</td>
+            <td>一份 8–12 页的研究笔记（PDF）：数据、因子定义、方法、结果、<b style="color:var(--tx)">失败原因分析</b>。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section>
+    <h2><span class="num">03</span>书籍清单</h2>
+    <p class="sub">按阅读顺序排列。建议主线一本 + 工具一本并行，不要同时开三本。</p>
+    <div class="res">
+      <div class="item"><div class="n">01</div><div class="body">
+        <div class="t">《因子投资：方法与实践》<span class="badge b-must">必做</span><span class="badge">中文</span></div>
+        <div class="d">石川、刘洋溢、连祥斌，电子工业出版社 2020（ISBN 9787121394287）。目前中文世界最好的因子投资系统教材，
+        且针对 A 股给出可复现实证。<b style="color:var(--tx)">这是你的第一本书，第 1–6 章要精读并手算。</b></div>
+      </div></div>
+      <div class="item"><div class="n">02</div><div class="body">
+        <div class="t">Advances in Financial Machine Learning<span class="badge b-must">必做</span><span class="badge b-adv">进阶</span></div>
+        <div class="d">Marcos López de Prado（Wiley）。业界公认量化 ML 第一书。重点章节：金融数据结构、Triple Barrier 标签、
+        <b style="color:var(--tx)">第 7 章交叉验证陷阱</b>、特征重要性。不必一次读完，第 3 周起配合项目读。</div>
+        <a class="l" href="https://www.wiley.com/en-ca/Advances+in+Financial+Machine+Learning-p-9781119482086" target="_blank">wiley.com ↗</a>
+      </div></div>
+      <div class="item"><div class="n">03</div><div class="body">
+        <div class="t">Python for Finance（第 2/3 版）<span class="badge b-must">工具</span></div>
+        <div class="d">Yves Hilpisch。把 Python 数值计算、随机过程、衍生品定价、投资组合一套打通。
+        作为「工具书 + 代码范本」使用，不必通读。</div>
+      </div></div>
+      <div class="item"><div class="n">04</div><div class="body">
+        <div class="t">《期权、期货及其他衍生产品》<span class="badge">金融基础</span></div>
+        <div class="d">John Hull。金数背景读起来会快，重点放在定价直觉与 Greeks，而非推导细节。</div>
+      </div></div>
+      <div class="item"><div class="n">05</div><div class="body">
+        <div class="t">A Practical Guide to Quantitative Finance Interviews（绿皮书）<span class="badge b-must">求职</span></div>
+        <div class="d">Xinfeng Zhou。量化面试的实际难度基准。第 1 个月先翻一遍感受题型，第 3 个月开始系统刷。</div>
+      </div></div>
+      <div class="item"><div class="n">06</div><div class="body">
+        <div class="t">《主动投资组合管理》<span class="badge">进阶</span></div>
+        <div class="d">Grinold &amp; Kahn。讲清 IC、IR、广度与主动风险的量化关系——面试高频考点，也是因子研究的理论骨架。</div>
+      </div></div>
+      <div class="item"><div class="n">07</div><div class="body">
+        <div class="t">Analysis of Financial Time Series<span class="badge">参考</span></div>
+        <div class="d">Ruey Tsay。ARIMA / GARCH / 波动率建模的权威教材，按需查阅，不建议通读。</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <h2><span class="num">04</span>代码库与工具</h2>
+    <p class="sub">先自己写一遍，再用库——否则你只会调包，不会研究。</p>
+    <div class="card" style="padding:8px 4px">
+      <table>
+        <thead><tr><th style="width:200px">项目</th><th>用途</th><th style="width:120px">建议阶段</th></tr></thead>
+        <tbody>
+          <tr><td>Microsoft Qlib</td><td>端到端量化 ML 平台：数据管理、因子表达式、模型训练、回测全流程。适合第 2 个月搭建规范化 pipeline 时参考。</td><td class="pri">第 5–8 周</td></tr>
+          <tr><td>Alphalens（reloaded）</td><td>因子 IC 分析、分层收益、因子衰减的标准工具。第一周的因子评价就靠它。</td><td class="pri">第 2 周</td></tr>
+          <tr><td>empyrical / quantstats</td><td>绩效指标（Sharpe、Sortino、最大回撤、Calmar）与一键绩效报告。</td><td class="pri">第 2 周</td></tr>
+          <tr><td>PyPortfolioOpt</td><td>组合优化：均值方差、Black-Litterman、风险平价。</td><td class="pri">第 6 周</td></tr>
+          <tr><td>backtrader / vectorbt</td><td>回测框架。vectorbt 向量化、参数扫描极快，适合研究；backtrader 事件驱动，适合复杂撮合。</td><td class="pri">第 4 周</td></tr>
+          <tr><td>mlfinlab</td><td>López de Prado 书中所提方法的开源实现（Hudson &amp; Thames）。读 AFML 时对照源码效果最好。</td><td class="pri">第 3 周</td></tr>
+          <tr><td>vn.py</td><td>国内最成熟的开源实盘框架（CTP 等接口）。做 A 股/期货实盘时再看。</td><td class="pri">第 3 个月+</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section>
+    <h2><span class="num">05</span>数据源与平台</h2>
+    <p class="sub">2026 年生态有几个变化，注意下面的标注。</p>
+    <div class="res">
+      <div class="item"><div class="n">01</div><div class="body">
+        <div class="t">AKShare<span class="badge b-free">免费</span><span class="badge b-must">首选</span></div>
+        <div class="d">完全免费、覆盖 A 股/期货/基金/宏观/另类数据，GitHub 星标超 24K，社区更新活跃。
+        缺点是接口偶有变动、稳定性波动——<b style="color:var(--tx)">个人学习和原型验证用它足够</b>。</div>
+        <a class="l" href="https://github.com/akfamily/akshare" target="_blank">github.com/akfamily/akshare ↗</a>
+      </div></div>
+      <div class="item"><div class="n">02</div><div class="body">
+        <div class="t">Baostock<span class="badge b-free">免费</span></div>
+        <div class="d">免费、稳定，可拉 1990 年至今全量日线做历史底库，含基本面数据。
+        适合与 AKShare 做交叉校验（同一批票两边 diff，差异 &gt; 0.1% 就要排查）。</div>
+        <a class="l" href="http://baostock.com" target="_blank">baostock.com ↗</a>
+      </div></div>
+      <div class="item"><div class="n">03</div><div class="body">
+        <div class="t">Tushare Pro<span class="badge">积分制</span></div>
+        <div class="d">数据规范度高，财务与因子数据齐全，是国内个人量化最常用的源之一。
+        只做 A 股日线 + 因子的情况下，约 ¥200/年的档位够用。港美股和分钟线需单独付费。</div>
+        <a class="l" href="https://tushare.pro" target="_blank">tushare.pro ↗</a>
+      </div></div>
+      <div class="item"><div class="n">04</div><div class="body">
+        <div class="t">Wind / 东方财富 Choice<span class="badge">机构</span></div>
+        <div class="d">机构标配，数据最全最权威。<b style="color:var(--tx)">北大图书馆/实验室通常有终端</b>——入学后第一时间确认访问权限，
+        这是学生身份最大的免费红利。</div>
+      </div></div>
+      <div class="item"><div class="n">05</div><div class="body">
+        <div class="t">WorldQuant BRAIN<span class="badge b-free">免费</span><span class="badge b-must">强烈推荐</span></div>
+        <div class="d">免费注册，提供 12 万+ 数据字段、云端算力与工业级因子评估框架；完成约 27 个 Tutorial 后可提交 Alpha 累积积分，
+        达 Gold 级有机会受邀成为研究顾问。2026 年 IQC 国际量化锦标赛已开放报名（团队成员须来自同一学校）。
+        <b style="color:var(--tx)">这是目前零成本接触真实因子研究最好的入口。</b></div>
+        <a class="l" href="https://platform.worldquantbrain.com" target="_blank">platform.worldquantbrain.com ↗</a>
+      </div></div>
+      <div class="item"><div class="n">06</div><div class="body">
+        <div class="t">米筐 RiceQuant / BigQuant<span class="badge">云端平台</span></div>
+        <div class="d">在线研究环境 + 数据 + 回测一体化，不想自建本地环境时省事。
+        注意：免费档通常有 T+1 延迟或额度限制。</div>
+      </div></div>
+      <div class="item"><div class="n">07</div><div class="body">
+        <div class="t">聚宽 JoinQuant<span class="badge b-adv">⚠ 状态变动</span></div>
+        <div class="d">老牌社区平台、策略库丰富，<b style="color:#F59E0B">但自 2026 年 8 月 1 日起停止对非中国大陆地区 IP 的服务</b>，
+        且社区有服务调整传闻。建议以米筐 / BigQuant 作为主要备选，把策略代码留在本地而非依赖单一云端平台。</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <h2><span class="num">06</span>课程</h2>
+    <p class="sub">书为主，课为辅。课程用来解决「看书看不懂的那一个点」，不要成套刷。</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3 style="font-size:15px;margin-bottom:10px">数学与金融</h3>
+        <ul>
+          <li>MIT 18.S096 — Topics in Mathematics with Applications in Finance（随机过程、最优化、衍生品，讲义公开）</li>
+          <li>北大数学学院金融数学方向的核心课程（随机过程、时间序列、金融衍生品定价）——优先把本专业的课学扎实</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15px;margin-bottom:10px">机器学习</h3>
+        <ul>
+          <li>Stanford CS229 / ISLR 配套课程（统计学习的正规训练，比碎片化教程有效得多）</li>
+          <li>WorldQuant BRAIN Learn 板块（免费，直接对应因子研究场景）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section>
+    <h2><span class="num">07</span>第一个项目的标准流程</h2>
+    <p class="sub">照这个顺序做一遍，你就拥有了一个能写进简历、能讲给面试官听的完整案例。</p>
+    <div class="card">
+<pre><span class="c"># 单一因子研究的七步标准动作（以 20 日动量为例）</span>
+
+1. 取数     → 30~500 只股票 × 3~10 年 <span class="k">前复权</span>日线（务必前复权，且剔除停牌/ST/上市不足 60 日）
+2. 定义因子 → momentum_20 = close[t] / close[t-20] - 1
+3. 定义收益 → fwd_ret_5 = close[t+5] / close[t] - 1   <span class="c"># 注意 t+1 开盘成交，别用收盘价成交（未来函数）</span>
+4. 预处理   → 去极值(winsorize 3σ) → 标准化(z-score) → 行业市值中性化
+5. 单因子检验 → IC / RankIC 序列、ICIR、t 检验、5 分组单调性、多空净值
+6. 稳健性   → 换参数(10/20/60日)、换股票池(沪深300/中证500)、换时间段 → 看结论是否还成立
+7. 加成本   → 双边千三（佣金+印花税+冲击）后重算 → 90% 的"好因子"会在这里死掉</pre>
+      <div class="note" style="margin-top:18px">
+        <b>验收标准：</b>不要求因子有效——事实上<b>第一次做出来无效才是正常且有价值的结果</b>。
+        真正的交付物是一份说清楚了「数据怎么来的、因子怎么定义的、为什么失效」的研究笔记。
+        面试官更看重你是否知道自己在做什么，而不是曲线好不好看。
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section>
+    <h2><span class="num">08</span>五个坑，现在就记住</h2>
+    <div class="grid g2">
+      <div class="card"><h3 style="font-size:15px;color:#F59E0B;margin-bottom:8px">01 未来函数</h3>
+        <p style="color:var(--tx2);font-size:14px">用当日收盘价生成信号、又用当日收盘价成交；或用含未来的财务报表数据。
+        这是最致命也最常见的错误，回测再漂亮都是幻觉。</p></div>
+      <div class="card"><h3 style="font-size:15px;color:#F59E0B;margin-bottom:8px">02 忽略交易成本</h3>
+        <p style="color:var(--tx2);font-size:14px">A 股双边成本（佣金+印花税+冲击）对短周期策略是致命的。
+        不计成本或按万分之一算，实盘一跑利润全被磨掉。</p></div>
+      <div class="card"><h3 style="font-size:15px;color:#F59E0B;margin-bottom:8px">03 过拟合</h3>
+        <p style="color:var(--tx2);font-size:14px">参数、时间段、股票池来回调，总能调出好看曲线。
+        判据：参数尽量少；逻辑先成立（为什么动量会有溢价），数据才作数。</p></div>
+      <div class="card"><h3 style="font-size:15px;color:#F59E0B;margin-bottom:8px">04 照搬美股因子</h3>
+        <p style="color:var(--tx2);font-size:14px">A 股有 T+1、涨跌停、印花税、股指期货基差、融券约束、小市值效应。
+        直接搬海外因子大概率失效，必须做本土化检验。</p></div>
+      <div class="card"><h3 style="font-size:15px;color:#F59E0B;margin-bottom:8px">05 卡在装包上</h3>
+        <p style="color:var(--tx2);font-size:14px">环境报错、库装不上就停摆。原则：<b style="color:var(--tx)">装不上就自己写 20 行替代</b>，
+        先推进度。工具是手段，不是目的。</p></div>
+      <div class="card"><h3 style="font-size:15px;color:var(--tx2);margin-bottom:8px">附：一条硬性原则</h3>
+        <p style="color:var(--tx2);font-size:14px">任何结论都必须有样本外验证。按时间切分（而非随机切分），
+        并在验证集与训练集之间留出 embargo 间隔，防止信息泄漏。</p></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    Quant Researcher 启动包 · 资源状态核对于 2026 年 9 月 · 价格与服务条款以各平台官网最新公布为准。
+  </div>
+</div>
+</body>
+</html>

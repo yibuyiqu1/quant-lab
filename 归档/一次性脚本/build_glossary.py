@@ -1,0 +1,198 @@
+# -*- coding: utf-8 -*-
+"""生成《量化数学双语术语对照表》：英文 → 中文 → 一句话解释 → 英文书里的位置。"""
+import os
+
+OUT = r"E:\AI结果\量化\量化数学双语术语对照表.md"
+
+# (英文, 中文, 一句话解释, 英文书常见位置)
+TERMS = [
+    # ---------- 第 1 组：概率空间与测度 ----------
+    ("probability space", "概率空间", "三元组 (Ω, F, P)：样本空间、事件域、概率测度", "Durrett 1.1"),
+    ("sample space / outcome", "样本空间 / 样本点", "所有可能结果的集合 Ω，单个结果叫样本点 ω", "Durrett 1.1"),
+    ("event", "事件", "Ω 的一个子集，必须属于事件域 F 才有概率", "Durrett 1.1"),
+    ("sigma-algebra / σ-field", "σ-代数 / σ-域", "对补集与可数并封闭的集合族，事件域的技术要求", "Durrett 1.1"),
+    ("algebra (field)", "代数 / 域", "只要求有限并封闭，是 σ-代数的弱化版本", "Durrett 1.1"),
+    ("measurable space", "可测空间", "(Ω, F)，只谈「哪些集合可测」，还没谈概率", "Durrett 1.1"),
+    ("measure", "测度", "从集合族到 [0,∞] 的可数可加集函数，概率是总质量为 1 的测度", "Durrett 1.1"),
+    ("countable additivity", "可数可加性", "P(∪Aₙ) = ΣP(Aₙ)（Aₙ 两两不交），概率论与初等概率的分水岭", "Durrett 1.1"),
+    ("continuity from below / above", "下连续 / 上连续", "Aₙ↑A ⇒ P(Aₙ)→P(A)；Aₙ↓A ⇒ P(Aₙ)→P(A)", "Durrett 1.1"),
+    ("Borel σ-algebra", "Borel σ-代数", "B(R)：由开集（或开区间、(-∞,a]）生成的最小 σ-代数", "Durrett 1.1"),
+    ("generated σ-algebra", "生成 σ-代数", "σ(A)：包含 A 的最小 σ-代数；用「σ-代数之交仍是 σ-代数」证明存在性", "Durrett 1.1"),
+    ("monotone class / Dynkin π-λ", "单调类 / π-λ 定理", "证明「某性质对所有集合成立」的标准工具", "Durrett 附录 A.2"),
+    ("Carathéodory extension", "卡拉泰奥多里扩张定理", "在半环上定义预测度后唯一扩张到 σ-代数上", "Durrett 附录 A.1"),
+    ("π-system", "π 系", "对有限交封闭的集合族，独立性/唯一性定理的常见条件", "Durrett 2.1"),
+    ("atom", "原子", "概率不可再分的最小正测度集合，离散分布的基本构件", "Durrett 1.3"),
+    ("absolute continuity", "绝对连续", "ν ≪ μ：μ(A)=0 ⇒ ν(A)=0；密度函数存在的前提", "Durrett A.4"),
+    ("Radon-Nikodym derivative", "Radon-Nikodym 导数", "dν/dμ，即「密度」的一般定义；Girsanov 的本质", "Durrett A.4"),
+    ("Lebesgue measure", "勒贝格测度", "R 上长度概念的推广，概率论的标准背景测度", "Durrett 1.2"),
+
+    # ---------- 第 2 组：随机变量与积分 ----------
+    ("random variable", "随机变量", "从 Ω 到 R 的可测映射：{X ≤ a} ∈ F 对一切 a", "Durrett 1.3"),
+    ("measurable function", "可测函数", "随机变量的推广：把可测集的原像仍可测", "Durrett 1.3"),
+    ("indicator function", "示性函数", "1_A(ω)=1（ω∈A）否则 0，期望即概率的本质", "Durrett 1.3"),
+    ("simple function", "简单函数", "有限个示性函数的线性组合，Lebesgue 积分的起点", "Durrett 1.4"),
+    ("distribution function", "分布函数", "F(x)=P(X≤x)，右连续、单调不减、两端极限 0/1", "Durrett 1.3"),
+    ("density", "密度函数", "f 使 F(x)=∫f；存在密度的分布叫绝对连续型", "Durrett 1.3"),
+    ("expectation", "期望 / 数学期望", "E[X]=∫X dP，Lebesgue 积分；离散/连续只是特例", "Durrett 1.4"),
+    ("Lebesgue integral", "勒贝格积分", "先定义非负简单函数，再取上确界，再拆正负部", "Durrett 1.4"),
+    ("monotone convergence theorem (MCT)", "单调收敛定理", "0≤Xₙ↑X ⇒ E[Xₙ]↑E[X]，不需要任何额外条件", "Durrett 1.4"),
+    ("Fatou's lemma", "Fatou 引理", "E[liminf Xₙ] ≤ liminf E[Xₙ]（非负情形）", "Durrett 1.4"),
+    ("dominated convergence theorem (DCT)", "控制收敛定理", "Xₙ→X a.s. 且 |Xₙ|≤Y∈L¹ ⇒ E[Xₙ]→E[X]", "Durrett 1.4"),
+    ("uniform integrability", "一致可积", "让「{Xₙ} 的尾部一致变小」的条件，把 a.s. 收敛升级为 L¹ 收敛", "Durrett 4.5"),
+    ("L^p space", "L^p 空间", "{X: E|X|^p<∞}，p=2 时是希尔伯特空间，条件期望的舞台", "Durrett 1.5"),
+    ("Holder / Cauchy-Schwarz inequality", "Hölder / 柯西-施瓦茨不等式", "E|XY| ≤ ‖X‖_p‖Y‖_q，方差与相关性的基础", "Durrett 1.5"),
+    ("Jensen's inequality", "Jensen 不等式", "φ 凸 ⇒ φ(E[X]) ≤ E[φ(X)]，条件版本同样成立", "Durrett 1.5"),
+    ("Markov / Chebyshev inequality", "马尔可夫 / 切比雪夫不等式", "P(X≥a) ≤ E[X]/a；用方差控制偏差概率", "Durrett 1.5"),
+
+    # ---------- 第 3 组：独立性、乘积空间、收敛 ----------
+    ("independence", "独立性", "P(A∩B)=P(A)P(B)；随机变量版本用分布函数乘积刻画", "Durrett 2.1"),
+    ("product measure", "乘积测度", "在积空间上构造的测度，Fubini 定理的前提", "Durrett 2.1"),
+    ("Fubini / Tonelli theorem", "Fubini / Tonelli 定理", "交换二重积分次序；Tonelli 只要求非负，Fubini 要求可积", "Durrett 2.1"),
+    ("Borel-Cantelli lemma", "Borel-Cantelli 引理", "ΣP(Aₙ)<∞ ⇒ P(Aₙ i.o.)=0；独立且发散则概率为 1", "Durrett 2.3"),
+    ("convergence almost surely", "几乎必然收敛", "P(lim Xₙ=X)=1，最强也最常用的收敛", "Durrett 2.1"),
+    ("convergence in probability", "依概率收敛", "∀ε: P(|Xₙ-X|>ε)→0", "Durrett 2.1"),
+    ("convergence in distribution", "依分布收敛", "Fₙ(x)→F(x) 在连续点；最弱，弱收敛/弱极限", "Durrett 2.1"),
+    ("convergence in L^p", "L^p 收敛", "E|Xₙ-X|^p→0；需要一致可积才能和 a.s. 互相转化", "Durrett 2.1"),
+    ("Slutsky's theorem", "Slutsky 定理", "依分布收敛 + 依概率收敛到常数，可做四则运算", "Durrett 3.2"),
+    ("continuous mapping theorem", "连续映射定理", "连续函数保持各种收敛（依分布版本 g 只需 a.s. 连续）", "Durrett 3.2"),
+    ("law of large numbers (LLN)", "大数律", "样本均值收敛到期望；弱收敛=依概率，强收敛=a.s.", "Durrett 2.2–2.4"),
+    ("central limit theorem (CLT)", "中心极限定理", "标准化和依分布收敛到 N(0,1)", "Durrett 3.1–3.4"),
+    ("characteristic function", "特征函数", "φ(t)=E[e^{itX}]，唯一决定分布，CLT 的标准证明工具", "Durrett 2.5"),
+    ("Lindeberg-Feller condition", "Lindeberg-Feller 条件", "独立不同分布情形下 CLT 成立的精确条件", "Durrett 3.4"),
+    ("tightness", "胎紧性", "分布族不「逃到无穷」的条件，弱收敛子列存在性的关键", "Durrett 3.2"),
+    ("Portmanteau theorem", "Portmanteau 定理", "依分布收敛的多个等价刻画（开集/闭集/有界连续函数）", "Durrett 3.2"),
+
+    # ---------- 第 4 组：条件期望与鞅 ----------
+    ("conditional expectation", "条件数学期望", "E[X|G]：满足「G 可测 + 积分相等」的随机变量（a.s. 唯一）", "Durrett 4.1"),
+    ("filtration", "流 / 滤子", "{Fₙ}：信息随时间的累积；量化里对应「截至 t 的可用信息」", "Durrett 4.1"),
+    ("tower property / law of total expectation", "塔性质 / 全期望公式", "E[E[X|G]]=E[X]；嵌套条件可约简 E[E[X|H]|G]=E[X|G]", "Durrett 4.1"),
+    ("conditional variance decomposition", "条件方差分解", "Var(X)=E[Var(X|Y)]+Var(E[X|Y])", "Durrett 4.1"),
+    ("martingale", "鞅", "E[X_{n+1}|Fₙ]=Xₙ：公平博弈的数学形式", "Durrett 5.1"),
+    ("submartingale / supermartingale", "下鞅 / 上鞅", "期望趋势向上 / 向下的过程", "Durrett 5.1"),
+    ("stopping time", "停时", "事件 {τ≤n} ∈ Fₙ：只看过去就能决定是否停止", "Durrett 5.3"),
+    ("optional stopping theorem (OST)", "可选停时定理", "E[X_τ]=E[X_0] 的条件；有界停时、有界增量、UI 等版本", "Durrett 5.3"),
+    ("upcrossing inequality", "上穿不等式", "控制过程中穿越区间的次数，鞅收敛定理的证明工具", "Durrett 5.5"),
+    ("martingale convergence theorem", "鞅收敛定理", "L¹ 有界的下鞅几乎必然收敛", "Durrett 5.5"),
+    ("Doob decomposition", "Doob 分解", "把下鞅分解为鞅 + 可料增过程", "Durrett 5.5"),
+    ("backward martingale", "倒向鞅", "指标集取负整数，用于证明 Lévy 下向定理", "Durrett 5.6"),
+    ("predictable process", "可料过程", "Hₙ 在 n 时刻前已知：策略不能用未来信息", "Durrett 5.2"),
+    ("martingale transform / discrete stochastic integral", "鞅变换 / 离散随机积分", "(H·X)ₙ=Σ Hₖ(Xₖ-X_{k-1})，鞅的「交易策略」", "Durrett 5.2"),
+
+    # ---------- 第 5 组：随机过程与布朗运动 ----------
+    ("stochastic process", "随机过程", "一族随机变量 {X_t}，量化里就是价格/收益/因子序列", "Durrett 6 章"),
+    ("Markov chain", "马尔可夫链", "给定现在，未来与过去无关；用转移矩阵描述", "Durrett 6.1"),
+    ("transition matrix", "转移矩阵", "P(i,j)=P(X_{n+1}=j|Xₙ=i)", "Durrett 6.1"),
+    ("stationary distribution", "平稳分布", "πP=π：长期占比，也是 A 股「市场状态」建模的对象", "Durrett 6.2"),
+    ("recurrence / transience", "常返 / 瞬态", "是否几乎必然无穷次返回某状态", "Durrett 6.3"),
+    ("random walk", "随机游走", "独立同分布增量的过程，布朗运动的离散原型", "Durrett 6.5"),
+    ("reflection principle", "反射原理", "求首达时间分布的标准技巧", "Durrett 7.4"),
+    ("Brownian motion / Wiener process", "布朗运动 / 维纳过程", "连续轨道、独立平稳高斯增量、二次变差为 t", "Durrett 8 章"),
+    ("quadratic variation", "二次变差", "[X]_t：非零二次变差是随机分析区别于普通微积分的根源", "Durrett 8.6"),
+    ("Gaussian process", "高斯过程", "任意有限维分布都是多元正态的过程", "Durrett 8.1"),
+    ("Poisson process", "泊松过程", "计数过程，跳跃时间间隔独立指数分布", "Durrett 6.6"),
+
+    # ---------- 第 6 组：随机分析（中文讲义主线） ----------
+    ("stochastic integral", "随机积分", "∫H dX：先对简单过程定义，再对 L² 闭包延拓", "刘勇讲义 第 3 章"),
+    ("Ito isometry", "Itô 等距", "E[(∫H dB)²]=E∫H² dt：随机积分的「能量守恒」", "刘勇讲义 第 3 章"),
+    ("Ito formula", "Itô 公式", "df(B_t)=f'dB+½f''dt，多出来的二阶项是核心", "刘勇讲义 第 4 章"),
+    ("Girsanov theorem", "Girsanov 定理", "用 Radon-Nikodym 导数换测度，把漂移「消掉」", "刘勇讲义 第 5 章附近"),
+    ("martingale representation theorem", "鞅表示定理", "布朗运动生成的鞅都能写成随机积分，对冲的理论基础", "刘勇讲义 第 5 章"),
+    ("stochastic differential equation (SDE)", "随机微分方程", "dX=μdt+σdB，扩散模型的统一形式", "刘勇讲义 第 6 章"),
+    ("strong / weak solution", "强解 / 弱解", "给定概率空间求轨道 vs 连同概率空间一起求", "刘勇讲义 第 6 章"),
+    ("Lipschitz + linear growth condition", "Lipschitz 条件 + 线性增长条件", "SDE 解存在唯一的标准充分条件", "刘勇讲义 第 6 章"),
+    ("Euler-Maruyama scheme", "Euler-Maruyama 格式", "SDE 最基础的数值离散格式（强度 1/2 阶）", "刘勇讲义 第 6 章"),
+    ("Milstein scheme", "Milstein 格式", "加入二阶修正项，提高强收敛阶", "刘勇讲义 第 6 章"),
+    ("Feynman-Kac formula", "Feynman-Kac 公式", "把 PDE 的解写成随机过程的期望，定价与风险中性", "刘勇讲义 第 6 章"),
+    ("Feller test / natural scale", "Feller 检验 / 自然尺度函数", "判断扩散过程是否爆炸、是否可达边界", "刘勇讲义 6.3 节"),
+    ("Ornstein-Uhlenbeck process", "Ornstein-Uhlenbeck 过程", "均值回复过程，配对交易的经典模型", "刘勇讲义 第 6 章"),
+    ("geometric Brownian motion", "几何布朗运动", "dS=μS dt+σS dB，Black-Scholes 的资产模型", "刘勇讲义 第 6 章"),
+    ("drift / diffusion coefficient", "漂移 / 扩散系数", "SDE 里的 μ 与 σ，量化的核心研究对象", "刘勇讲义 第 6 章"),
+
+    # ---------- 第 7 组：金融与量化实务 ----------
+    ("risk-neutral measure", "风险中性测度", "让贴现资产成为鞅的等价测度，定价的基准", "Shreve II / Hull"),
+    ("arbitrage", "套利", "无风险正收益，定价理论的出发点", "Shreve II"),
+    ("replication / hedging", "复制 / 对冲", "用可交易资产复制目标payoff，定价与风控的共同基础", "Shreve II"),
+    ("Greek letters", "希腊字母", "Delta/Gamma/Vega/Theta：对各参数的一阶二阶敏感度", "Hull"),
+    ("implied volatility", "隐含波动率", "由市场价格反解出的 σ，其曲面形状反映市场预期", "Hull"),
+    ("volatility smile / skew", "波动率微笑 / 偏斜", "隐含波动率随行权价变化的非平坦形态", "Hull / Gatheral"),
+    ("market microstructure", "市场微观结构", "订单簿、价差、流动性与信息不对称的研究", "O'Hara / Harris"),
+    ("order book", "订单簿", "买卖报价与挂单量的实时记录", "O'Hara"),
+    ("order flow imbalance", "订单流不平衡", "买卖主动成交量的差额，短期价格预测的核心变量", "高频研究文献"),
+    ("bid-ask spread", "买卖价差", "最优买价与最优卖价之差，最直接的交易成本", "Harris"),
+    ("market impact", "市场冲击", "自己的交易推动价格的程度，决定策略容量", "Almgren-Chriss"),
+    ("slippage", "滑点", "预期成交价与实际成交价之差", "实务"),
+    ("implementation shortfall", "实施缺口", "决策价与最终成交均价的差，最优执行的目标函数", "Almgren-Chriss"),
+    ("transaction cost model", "交易成本模型", "把佣金、印花税、价差、冲击统一量化的假设", "Almgren-Chriss"),
+    ("portfolio optimization", "组合优化", "在约束下最大化预期收益/最小化风险", "Boyd / Grinold"),
+    ("mean-variance optimization", "均值方差优化", "Markowitz 框架：max μ'w - λw'Σw", "Markowitz"),
+    ("shrinkage estimator", "收缩估计", "把样本协方差向结构化目标收缩，降低估计误差", "Ledoit-Wolf"),
+    ("information coefficient (IC)", "信息系数", "因子值与未来收益的横截面相关系数，因子研究的核心指标", "Grinold & Kahn"),
+    ("information ratio", "信息比率", "超额收益均值/跟踪误差，主动管理能力的度量", "Grinold & Kahn"),
+    ("factor exposure / beta", "因子暴露 / beta", "组合对某个风格因子的敏感度", "Grinold & Kahn"),
+    ("alpha / signal", "Alpha / 信号", "扣除风险暴露后仍然存在的超额收益来源", "Grinold & Kahn"),
+    ("backtest", "回测", "在历史数据上模拟策略表现，最容易自欺的环节", "López de Prado"),
+    ("look-ahead bias", "前视偏差", "用了当时不可得的信息，回测虚高的最常见原因", "López de Prado"),
+    ("survivorship bias", "幸存者偏差", "只用还活着的股票，忽略退市者", "López de Prado"),
+    ("overfitting", "过拟合", "在样本内表现好、样本外失效", "ESL"),
+    ("cross-validation", "交叉验证", "评估泛化能力；时间序列需用 purged/embargoed 版本", "ESL / López de Prado"),
+    ("purged / embargoed CV", "净化与隔离交叉验证", "去除标签重叠并留出缓冲期，金融时序的正确做法", "López de Prado 第 7 章"),
+    ("walk-forward analysis", "滚动前向分析", "用滚动窗口反复训练与检验，最接近实盘", "实务"),
+    ("multiple testing / FDR", "多重检验 / 错误发现率", "大量因子中筛选必然产生假阳性，必须校正", "统计推断"),
+    ("bootstrapping", "自助法", "有放回重采样估计统计量分布，重尾数据的稳健工具", "ESL"),
+    ("stationarity", "平稳性", "分布不随时间变化，时序建模的前提", "Hamilton / Tsay"),
+    ("cointegration", "协整", "非平稳序列的线性组合平稳，配对交易的统计基础", "Hamilton"),
+    ("GARCH", "GARCH 模型", "波动率聚集现象的经典建模方式", "Tsay"),
+    ("state space model / Kalman filter", "状态空间模型 / 卡尔曼滤波", "隐含状态 + 观测方程，动态因子与时变 beta", "Hamilton"),
+]
+
+lines = [
+    "# 量化数学双语术语对照表",
+    "",
+    "用法：英文书读不懂时**先查这张表**，把英文术语换成中文概念；反过来读中文材料时，",
+    "用它记住英文术语，面试时能听懂面试官在问什么。",
+    "",
+    "建议打印前两组（概率空间 + 随机变量与积分），读 Durrett 第 1 章时放在手边。",
+    "",
+    f"共收录 {len(TERMS)} 条，按学习顺序分组。",
+    "",
+]
+
+groups = {
+    1: "第 1 组：概率空间与测度（D1–D4 用）",
+    2: "第 2 组：随机变量与积分（D3–D5 用）",
+    3: "第 3 组：独立性、乘积空间与收敛（D4–D9 用）",
+    4: "第 4 组：条件期望与鞅（D10–D16 用）",
+    5: "第 5 组：随机过程与布朗运动（D17–D21 用）",
+    6: "第 6 组：随机分析（D22–D42 用，对应北大刘勇《应用随机分析》讲义）",
+    7: "第 7 组：金融与量化实务（D43–D90 与面试用）",
+}
+
+boundaries = [0, 18, 33, 50, 65, 76, 92, len(TERMS)]
+for gi in range(1, 8):
+    lines += [f"## {groups[gi]}", "", "| 英文 | 中文 | 解释 | 位置 |", "|---|---|---|---|"]
+    for en, zh, desc, where in TERMS[boundaries[gi - 1]:boundaries[gi]]:
+        lines.append(f"| **{en}** | {zh} | {desc} | {where} |")
+    lines.append("")
+
+lines += [
+    "---",
+    "",
+    "## 读英文书的三个具体技巧",
+    "",
+    "1. **先读定理的陈述，跳过证明，读中文对应材料，再回来读证明。** 证明读不懂通常不是英语问题，",
+    "   是缺某个前置定义——先定位那个定义。",
+    "2. **英文数学书的句子结构高度固定**，常见句式只有几种：",
+    "   - \"Let ... be ...\" → 设……为……（定义引入）",
+    "   - \"Suppose that ... Then ...\" → 假设……则……（定理结构）",
+    "   - \"if and only if\" → 当且仅当（等价刻画）",
+    "   - \"it suffices to show\" → 只需证明（作者在给你减负，这里是关键路径）",
+    "   - \"without loss of generality (WLOG)\" → 不妨设（对称性简化）",
+    "   - \"by the monotone convergence theorem\" → 由单调收敛定理（跳步，需要回去查）",
+    "3. **公式比文字重要**：数学书里 70% 的信息在公式里。读不懂段落时，直接看公式在说什么，",
+    "   再回头看文字如何描述这个公式。",
+    "",
+]
+
+with open(OUT, "w", encoding="utf-8") as fh:
+    fh.write("\n".join(lines))
+print("saved:", OUT, "| 术语条数:", len(TERMS))

@@ -1,0 +1,22 @@
+# 虚拟环境
+.venv/
+venv/
+
+# Python 缓存
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# 数据（体积大，且可重新下载）
+data/raw/*
+data/clean/*
+!data/raw/.gitkeep
+!data/clean/.gitkeep
+
+# 大体积资料（教材 PDF 不上传）
+资料库/*.pdf
+*.part
+
+# 编辑器
+.vscode/
+.idea/
