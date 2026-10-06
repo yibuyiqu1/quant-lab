@@ -43,8 +43,12 @@ data/clean/*
 *.swo
 
 # ---------- 运行产生的中间产物 ----------
-# 保留代表性的图与最终报告，其余不进仓库
-reports/**/*.json
+# 保留代表性的图与最终报告；只排除"多次运行的中间 JSON"和临时图
+# 注意：reports/d01_mine.json 是你自己那版的代表性结果，故意保留
+reports/_*.json
+reports/*_lecture.json
+reports/*_lesson.json
+reports/*_result.json
 reports/figs/_*.png
 *.log
 _check*.json

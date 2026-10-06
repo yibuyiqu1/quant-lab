@@ -45,8 +45,12 @@ SHOULD_NOT_TRACK = [
 ]
 
 # 报告类里的中间产物：建议不进仓库（规则写在 .gitignore 里，但已跟踪的需手动 git rm --cached）
+# 说明：reports/d01_mine.json 是"你自己那版"的代表性结果，故意保留，不列入
 INTERMEDIATE_PATTERNS = (
-    "reports/*.json",
+    "reports/_*.json",
+    "reports/*_lecture.json",
+    "reports/*_lesson.json",
+    "reports/*_result.json",
     "reports/figs/_*.png",
 )
 
