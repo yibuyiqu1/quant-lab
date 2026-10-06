@@ -2,20 +2,22 @@
 #  .gitignore —— 哪些文件不进 Git 仓库
 # ============================================================
 #  重要规则：.gitignore 只对「还没被跟踪」的文件生效。
-#  如果某个文件以前 git add 过，光加规则没用，
-#  必须先执行：git rm -r --cached <路径>   （本地文件不会被删）
-#  推送前自查：.venv\Scripts\python.exe src\check_repo.py
+#  已 git add 过的文件，光加规则没用，必须先：
+#      git rm -r --cached <路径>      （本地文件不会被删）
+#  推送前自查：
+#      .venv\Scripts\python.exe src\check_repo.py
 # ============================================================
 
-# ---------- Python 虚拟环境 ----------
+# ---------- 个人环境（每台机器都不一样，不该共享）----------
 .venv/
 venv/
-env/
+.vscode/
+.idea/
+*.swp
 
 # ---------- Python 缓存 ----------
 __pycache__/
 *.pyc
-*.pyo
 .pytest_cache/
 .ipynb_checkpoints/
 
@@ -26,29 +28,14 @@ data/clean/*
 !data/clean/.gitkeep
 
 # ---------- 教材与讲义（体积大，且不适合公开转存他人材料）----------
-# 用 资料库/ 整目录排除，比 资料库/*.pdf 更可靠：
-# 后者只匹配根目录下的 pdf，子目录里的会漏掉
 资料库/
 *.part
 
-# ---------- 归档的一次性脚本与过期文件 ----------
-归档/
-
-# ---------- 别的工具的元数据 ----------
-.workbuddy/
-
-# ---------- 编辑器个人配置 ----------
-.idea/
-*.swp
-*.swo
-
 # ---------- 运行产生的中间产物 ----------
-# 保留代表性的图与最终报告；只排除"多次运行的中间 JSON"和临时图
-# 注意：reports/d01_mine.json 是你自己那版的代表性结果，故意保留
+# 保留代表性图表与最终报告，其余不入库
 reports/_*.json
 reports/*_lecture.json
 reports/*_lesson.json
 reports/*_result.json
 reports/figs/_*.png
 *.log
-_check*.json
